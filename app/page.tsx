@@ -1,7 +1,5 @@
 "use client";
 
-import { useRef, useState } from "react";
-
 import { AIPromptInput } from "@/components/prompt-input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -9,10 +7,12 @@ import ImageGenerationLoading from "@/components/image-generation";
 import { LeftSidebar } from "@/components/left-sidebar";
 import { Navbar } from "@/components/navbar";
 import { RightSidebar } from "@/components/right-sidebar";
+import { useImageEditorStore } from "@/store/useImageEditorStore";
+import { useRef } from "react";
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState<string>("");
+  const { image, setImage } = useImageEditorStore();
 
   const uploadImageChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
