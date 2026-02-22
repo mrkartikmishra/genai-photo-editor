@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef, useState } from "react";
+
 import { AIPromptInput } from "@/components/prompt-input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -9,7 +11,24 @@ import { Navbar } from "@/components/navbar";
 import { RightSidebar } from "@/components/right-sidebar";
 
 export default function Home() {
-  const imageSelected = false;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [image, setImage] = useState<string>("");
+
+  const uploadImageChangeHandler = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+
+    const fileReader = new FileReader();
+
+    fileReader.onload = () => {
+      const data = fileReader.result;
+      setImage(data as string);
+    };
+
+    fileReader.readAsDataURL(file as File);
+  };
+
   return (
     <>
       <div className="flex flex-col w-full h-dvh overflow-hidden">
@@ -33,7 +52,7 @@ export default function Home() {
 
               {/* MAIN EDITOR SCREEN */}
               <div className="flex justify-center items-center p-6 md:p-10 w-full h-full">
-                {!imageSelected ? (
+                {!image ? (
                   <div className="z-10 space-y-6 max-w-sm text-center">
                     <div className="flex justify-center items-center bg-zinc-900/50 shadow-2xl shadow-yellow-900/10 mx-auto border border-zinc-800 rounded-3xl w-24 h-24">
                       <Image
@@ -56,8 +75,16 @@ export default function Home() {
                         AI tools.
                       </p>
                     </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      id="image-upload"
+                      className="hidden"
+                      onChange={uploadImageChangeHandler}
+                    />
                     <Button
-                      onClick={() => {}}
+                      onClick={() => fileInputRef.current?.click()}
                       className="bg-yellow-500 hover:bg-yellow-400 rounded-xl w-full h-11 font-bold text-zinc-950 hover:scale-[1.02] transition-all"
                     >
                       Select Image
@@ -65,7 +92,7 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="relative flex justify-center items-center w-full h-full">
-                    IMAGE EDITOR COMPONENT
+                    <Image src={image} alt="" width={500} height={500} />
                   </div>
                 )}
               </div>
